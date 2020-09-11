@@ -54,7 +54,7 @@ function getRedditImage() {
         'hmmmgifs',
         'bettereveryloop',
         'formuladank',
-        'gifs',
+        'stonks',
     ];
 
     $client = new Client();
@@ -80,9 +80,7 @@ function writeToCSV($url) {
 }
 
 function checkForURLPrevious($url) {
-    $csv = fopen($_ENV['HISTORY_FILE'], 'rb');
-
-    if (false === $csv) {
+    if (false === $csv = fopen($_ENV['HISTORY_FILE'], 'rb')) {
         touch($_ENV['HISTORY_FILE']);
         return false;
     }
@@ -98,8 +96,6 @@ function checkForURLPrevious($url) {
 
 function postMessageToDiscord($message) {
     $client = new Client();
-    $dotenv = new Dotenv();
-    $dotenv->load(__DIR__.'/.env');
 
     $client->post('https://discordapp.com/api/channels/' . $_ENV['CHANNEL_ID'] . '/messages', [
         'headers' => [
@@ -111,4 +107,6 @@ function postMessageToDiscord($message) {
     ]);
 }
 
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
 postMessageToDiscord(videoOrMeme());

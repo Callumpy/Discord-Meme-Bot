@@ -15,7 +15,7 @@ function videoOrMeme() {
     }
 
     if (1 !== $day) {
-        return hmmgif();
+        return getRedditImage();
     }
 
     switch ($month) {
@@ -49,13 +49,51 @@ function videoOrMeme() {
     }
 }
 
-function hmmgif() {
+function getRedditImage() {
+    $subreddits = [
+        'hmmmgifs',
+        'bettereveryloop',
+        'formuladank',
+        'gifs',
+    ];
+
     $client = new Client();
-    $response = $client->get('https://www.reddit.com/r/hmmmgifs/hot.json?limit=1');
 
-    $json = json_decode($response->getBody(), true);
+    foreach ($subreddits as $subreddit) {
+        $response = $client->get('https://www.reddit.com/r/' . $subreddit . '/hot.json?limit=1');
+        $json = json_decode($response->getBody(), true);
+        $imageURL = $json['data']['children'][0]['data']['url'];
 
-    return $json['data']['children'][0]['data']['url'];
+        if (!checkForURLPrevious($imageURL)) {
+             writeToCSV($imageURL);
+             return $imageURL;
+        }
+    }
+
+    return 'No new hot memes today apparently';
+}
+
+function writeToCSV($url) {
+    $csv = fopen($_ENV['HISTORY_FILEß'], 'ab');
+    fputcsv($csv, [$url]);
+    fclose($csv);
+}
+
+function checkForURLPrevious($url) {
+    $csv = fopen($_ENV['HISTORY_FILEß'], 'rb');
+
+    if (false === $csv) {
+        touch($_ENV['HISTORY_FILEß']);
+        return false;
+    }
+
+    while (false !== ($data = fgetcsv($csv))) {
+        if ($url === $data[0]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function postMessageToDiscord($message) {

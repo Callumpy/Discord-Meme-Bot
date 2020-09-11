@@ -74,16 +74,16 @@ function getRedditImage() {
 }
 
 function writeToCSV($url) {
-    $csv = fopen($_ENV['HISTORY_FILEß'], 'ab');
+    $csv = fopen($_ENV['HISTORY_FILE'], 'ab');
     fputcsv($csv, [$url]);
     fclose($csv);
 }
 
 function checkForURLPrevious($url) {
-    $csv = fopen($_ENV['HISTORY_FILEß'], 'rb');
+    $csv = fopen($_ENV['HISTORY_FILE'], 'rb');
 
     if (false === $csv) {
-        touch($_ENV['HISTORY_FILEß']);
+        touch($_ENV['HISTORY_FILE']);
         return false;
     }
 

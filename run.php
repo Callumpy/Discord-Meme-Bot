@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Europe/London');
+
 require __DIR__ . '/vendor/autoload.php';
 
 use GuzzleHttp\Client;
@@ -109,4 +111,5 @@ function postMessageToDiscord($message) {
 
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__.'/.env');
+
 postMessageToDiscord(videoOrMeme());
